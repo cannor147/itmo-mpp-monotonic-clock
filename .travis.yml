@@ -10,6 +10,5 @@ matrix:
           packages:
             - oracle-java8-installer
             - oracle-java8-set-default 
-            - maven
 
-script: mvn verify
+script: ./gradlew run
