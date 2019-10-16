@@ -1,19 +1,16 @@
-package monotonic_clock
-
-import java.lang.reflect.Modifier
+import java.lang.reflect.*
 import java.util.*
-import java.util.concurrent.atomic.AtomicInteger
-import java.util.concurrent.atomic.AtomicReference
-import java.util.concurrent.locks.LockSupport
+import java.util.concurrent.atomic.*
+import java.util.concurrent.locks.*
+import kotlin.system.*
 
-val TEST_TIME_SEC = 10 // number of seconds to test
-val N_CLOCKS = 2 // test two clocks concurrently
-val PAUSE_EVERY_N_STEPS = 1000 // lock-freedom testing
+const val TEST_TIME_SEC = 10 // number of seconds to test
+const val N_CLOCKS = 2 // test two clocks concurrently
+const val PAUSE_EVERY_N_STEPS = 1000 // lock-freedom testing
 
 fun error(text: String): Nothing  {
     println("ERROR: $text")
-    System.exit(1)
-    throw IllegalStateException(text)
+    exitProcess(1)
 }
 
 fun verifyClass(clazz: Class<Solution>) {
@@ -77,10 +74,10 @@ private inline fun testThread(name: String, group: Group, crossinline block: () 
         }
     }
 
-fun main(args: Array<String>) {
+fun main() {
     verifyClass(Solution::class.java)
-    val solutions = List<Solution>(N_CLOCKS) { Solution() }
-    val groups = List<Group>(N_CLOCKS) { i -> Group(i) }
+    val solutions = List(N_CLOCKS) { Solution() }
+    val groups = List(N_CLOCKS) { i -> Group(i) }
     val baseTime = System.nanoTime()
     val writers = List<Thread>(N_CLOCKS) { i ->
         testThread("Writer$i", groups[i]) {
@@ -100,7 +97,7 @@ fun main(args: Array<String>) {
             val lastWrite = groups[i].afterWrite
             val cur = solutions[i].read()
             val startWrite = groups[i].beforeWrite
-            if (cur < last) error("Non-monothonic read $cur < $last")
+            if (cur < last) error("Non-monotonic read $cur < $last")
             if (cur < lastWrite) error("Read value earlier than last written one $cur < $lastWrite")
             if (cur > startWrite) error("Read value later than value being written $cur > $startWrite")
             last = cur
@@ -116,5 +113,5 @@ fun main(args: Array<String>) {
     groups.forEach { it.tick() }
     (readers + writers).forEach { it.join() }
     println("ACCEPTED")
-    System.exit(0)
+    exitProcess(0)
 }

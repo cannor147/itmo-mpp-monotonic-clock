@@ -1,5 +1,3 @@
-package monotonic_clock
-
 import kotlin.reflect.KProperty
 
 class RegularInt(var value: Int) {

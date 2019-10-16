@@ -1,5 +1,3 @@
-package monotonic_clock;
-
 import org.jetbrains.annotations.NotNull;
 
 /**
