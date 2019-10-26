@@ -27,7 +27,7 @@ sourceSets {
 }
 
 application {
-    mainClassName = "VerifyMonotoniсСlockKt"
+    mainClassName = "VerifyMonotonicClockKt"
 }
 
 tasks["build"].dependsOn("run")
